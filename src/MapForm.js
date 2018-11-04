@@ -90,20 +90,38 @@ class MapForm extends Component {
 
   showDataOptions(place) {
 
-    var {types, opening_hours, geometry} = place
+    var {types, opening_hours, geometry, address_components} = place
+
+    var state = address_components
+
+      .reduce((state, component) => {
+        var {types} = component;
+
+        if (types.includes('administrative_area_level_1')) {
+
+          state = component.short_name
+          console.log('found state')
+
+        }
+
+        return state;
+
+      }, {})
+
     var business = {
 
       name: place.name,
       address: place.formatted_address,
+      state,
       phone: place.formatted_phone_number,
 
     }
 
     if (opening_hours && opening_hours.weekday_text) {
 
-      business.weekday_text = opening_hours.weekday_text
+      // business.weekday_text = opening_hours.weekday_text
 
-      business.hours = business.weekday_text.reduce((hours, text) => {
+      business.hours = opening_hours.weekday_text.reduce((hours, text) => {
 
         return `${hours}
         ${text}`

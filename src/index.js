@@ -63,6 +63,11 @@ class App extends Component {
           value: ''
         },
         {
+          label: 'State',
+          feildKey: 'state',
+          value: ''
+        },
+        {
           label: 'Email',
           feildKey: 'email',
           value: ''
@@ -99,32 +104,44 @@ class App extends Component {
   }
 
   onMapUpdate = (update) => {
+
     console.log({
       update
     })
+
     const listUpdate = this.state.feildList.map((feild) => {
       return {
         ...feild,
         value: update.business[feild.feildKey] ? update.business[feild.feildKey] : ''
       }
     })
+
     this.setState({
-      feildList: listUpdate
+      feildList: listUpdate,
+      businessData: update.business,
     })
   }
 
   saveBusinessForm = () => {
+
     const businessState = this.state.feildList.reduce((businessState, feild) => {
       return {
         ...businessState,
         [feild.feildKey]: feild.value
       }
     }, {})
+
+    var {businessData} = this.state;
+
     console.log({
-      businessState
+      businessState,
+      businessData
     })
+
     db.collection('partners').add({
-      businessState
+      ...businessData,
+
+      ...businessState,
     })
       .then((data) => {
         console.log({
