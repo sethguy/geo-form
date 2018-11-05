@@ -90,7 +90,7 @@ class MapForm extends Component {
 
   showDataOptions(place) {
 
-    var {types, opening_hours, geometry, address_components} = place
+    var {types, opening_hours, geometry, address_components, website} = place
 
     var state = address_components
 
@@ -114,6 +114,7 @@ class MapForm extends Component {
       address: place.formatted_address,
       state,
       phone: place.formatted_phone_number,
+      website,
 
     }
 

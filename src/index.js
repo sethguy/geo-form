@@ -75,6 +75,17 @@ class App extends Component {
         {
           label: 'Description',
           feildKey: 'description',
+          value: '',
+          type: 'textArea'
+        },
+        {
+          label: 'Workchew Hours',
+          feildKey: 'workChewHours',
+          value: ''
+        },
+        {
+          label: 'Website',
+          feildKey: 'website',
           value: ''
         },
         {
