@@ -122,12 +122,12 @@ class MapForm extends Component {
 
       // business.weekday_text = opening_hours.weekday_text
 
-      business.hours = opening_hours.weekday_text.reduce((hours, text) => {
+business.hours = opening_hours.weekday_text.reduce((hours, text) => {
 
-        return `${hours}
+  return `${hours}
         ${text}`
 
-      }, "")
+}, '')
 
     }
 

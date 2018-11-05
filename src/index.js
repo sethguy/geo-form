@@ -8,7 +8,6 @@ import firebase from './firebase'
 
 var db = firebase.firestore();
 
-
 const FormPut = (props) => {
   return <div className="row d-flex align-items-center w-50 m-3">
            <div className='col-sm-2 d-flex justify-content-center'>
@@ -26,7 +25,7 @@ const FormTextArea = (props) => {
              <span>{ props.label }</span>
            </div>
            <div className='col-sm-10'>
-             <textarea onChange={ (e) => props.onChange(props, e) } value={ props.value } className="form-control" />
+             <textarea resizeable={ true } onChange={ (e) => props.onChange(props, e) } value={ props.value } className="form-control" />
            </div>
          </div>
 }
@@ -60,7 +59,9 @@ class App extends Component {
         {
           label: 'Address',
           feildKey: 'address',
-          value: ''
+          value: '',
+          type: 'textArea',
+
         },
         {
           label: 'State',
@@ -81,6 +82,8 @@ class App extends Component {
         {
           label: 'Workchew Hours',
           feildKey: 'workChewHours',
+          type: 'textArea',
+
           value: ''
         },
         {
