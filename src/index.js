@@ -6,10 +6,15 @@ import MapForm from './MapForm'
 
 import firebase from './firebase'
 
+import Dropzone from 'react-dropzone'
+
+import { fireUpload } from './fireUpload'
+import { v4 } from 'uuid'
+
 var db = firebase.firestore();
 
 const FormPut = (props) => {
-  return <div className="row d-flex align-items-center w-50 m-3">
+  return <div className="row d-flex align-items-center m-3">
            <div className='col-sm-2 d-flex justify-content-center'>
              <span>{ props.label }</span>
            </div>
@@ -20,7 +25,7 @@ const FormPut = (props) => {
 }
 
 const FormTextArea = (props) => {
-  return <div className="row d-flex align-items-center w-50 m-3">
+  return <div className="row d-flex align-items-center m-3">
            <div className='col-sm-2 d-flex justify-content-center'>
              <span>{ props.label }</span>
            </div>
@@ -136,27 +141,88 @@ class App extends Component {
     })
   }
 
+  onDrop = (fileEvent) => {
+
+
+    var [file] = fileEvent.target.files
+
+    var reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+
+      this.setState({
+        previewfiles: [
+
+          {
+            file,
+            preview: reader.result
+          }
+        ]
+      });
+
+    }, false);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+
+
+  }
+
+  uploadPhoto = () => {
+    var [file] = this.state.previewfiles
+
+    fireUpload(file.preview)
+
+      .then((res) => {
+
+        console.log('res', res)
+
+this.setState({
+  newPartnerPhoto: res.downloadURL
+})
+      })
+
+  }
+
+  clearPreview = () => {
+    this.setState({
+      previewfiles: []
+    });
+
+  }
+
   saveBusinessForm = () => {
 
-    const businessState = this.state.feildList.reduce((businessState, feild) => {
-      return {
-        ...businessState,
-        [feild.feildKey]: feild.value
-      }
-    }, {})
+    const businessState = this.state.feildList
 
-    var {businessData} = this.state;
+      .reduce((businessState, feild) => {
+        return {
+          ...businessState,
+          [feild.feildKey]: feild.value,
+        }
+      }, {})
+
+    var {businessData, newPartnerPhoto} = this.state;
 
     console.log({
       businessState,
       businessData
     })
 
-    db.collection('partners').add({
+    var partnerUpdate = {
       ...businessData,
-
       ...businessState,
-    })
+
+    }
+
+    if (newPartnerPhoto && newPartnerPhoto.length) {
+
+      partnerUpdate.photoUrl = newPartnerPhoto
+
+    }
+
+    db.collection('partners').add(partnerUpdate)
       .then((data) => {
         console.log({
           data
@@ -166,20 +232,40 @@ class App extends Component {
   }
 
   render() {
-    return (
 
+    var {previewfiles} = this.state;
+
+    return (
       <div className="w-100">
         <div className="m-3" />
         <div className="h-50 w-100">
           <MapForm onChange={ this.onMapUpdate } />
         </div>
-        <FeildList {...{ list: this.state.feildList, onChange: this.onChange }} />
+        <div className="row">
+          <div className="col-md-6">
+            <FeildList {...{ list: this.state.feildList, onChange: this.onChange }} />
+          </div>
+          <div className="col-md-6">
+            <br/>
+            <input type="file" onChange={ this.onDrop } />
+            { previewfiles && previewfiles.map((file) => <img key={ v4() } style={ { height: 200, width: 200, } } src={ file.preview } />) }
+            <br/>
+            { previewfiles &&
+              <div>
+                <button className="btn btn-primary m-3" onClick={ this.uploadPhoto }>
+                  upload
+                </button>
+                <button className="btn btn-warning m-3" onClick={ this.clearPreview }>
+                  clear
+                </button>
+              </div> }
+          </div>
+        </div>
         <button className="btn btn-info m-3" onClick={ this.saveBusinessForm }>
           save
         </button>
         <div className="m-3" />
       </div>
-
       );
   }
 }

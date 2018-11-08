@@ -1,7 +1,11 @@
-import firebase from '../../firebase'
+import firebase from './firebase'
+
+import { v4 } from 'uuid'
+
 const db = firebase.firestore();
 
-export const fireUpload = ({fileData, fileName}) => {
+
+export const fireUpload = (fileData) => {
 
   return new Promise((resolve, reject) => {
 
@@ -10,8 +14,8 @@ export const fireUpload = ({fileData, fileName}) => {
       .ref();
 
     var uploadTask = storageRef
-      .child(`images/${fileName}.jpg`)
-      .put(fileData);
+      .child(`images/${v4()}-partner-photo.jpg`)
+      .putString(fileData, 'data_url');
 
     uploadTask.on('state_changed', (snapshot) => {
 
